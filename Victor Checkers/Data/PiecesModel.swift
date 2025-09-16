@@ -16,8 +16,9 @@ struct PiecesModel {
   var blackKings: [Point] = []
   var heuristics: Int? = nil
   var level: Int = 0
+  var children: [PiecesModel] = []
   
-  struct Point {
+  struct Point : Equatable {
     var x: Int
     var y: Int
   }
