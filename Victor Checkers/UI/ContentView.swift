@@ -77,7 +77,6 @@ struct ContentView: View {
                         } else {
                           viewModel.position.whiteKings.append(destination)
                         }
-                            
                       }
                       if let index = indexKing {
                         viewModel.position.whiteKings.remove(at: index)
