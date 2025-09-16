@@ -72,7 +72,12 @@ struct ContentView: View {
                       }
                       if let index = index {
                         viewModel.position.whiteMen.remove(at: index)
-                        viewModel.position.whiteMen.append(destination)
+                        if endY < 7 {
+                          viewModel.position.whiteMen.append(destination)
+                        } else {
+                          viewModel.position.whiteKings.append(destination)
+                        }
+                            
                       }
                       if let index = indexKing {
                         viewModel.position.whiteKings.remove(at: index)
