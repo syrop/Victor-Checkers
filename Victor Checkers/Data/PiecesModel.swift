@@ -23,8 +23,7 @@ struct PiecesModel {
     var y: Int
   }
   
-  func populateChildred() async -> [PiecesModel] {
-    let result: [PiecesModel] = []
+  func generateChildren() async -> [PiecesModel] {
     let whiteMove = level % 2 == 0
     let men = (whiteMove) ? whiteMen : blackMen
     let kings = (whiteMove) ? whiteKings : blackKings
@@ -89,6 +88,37 @@ struct PiecesModel {
         return result
       }
       
+      func kingMoves(position: PiecesModel, at point: Point, dirX: Int, dirY: Int) -> [PiecesModel] {
+        var result: [PiecesModel] = []
+        var x = point.x
+        var y = point.y
+        while (true) {
+          x += dirX
+          y += dirY
+          var addition = position
+          if isEmptyAndValid(Point(x: x + dirX, y: y + dirY)) && whiteMove && containsBlack(Point(x: x, y: y)) {
+            addition = capture(position: addition, at: Point(x: x, y: y))
+            addition.whiteKings.append(Point(x: x + dirX, y: y + dirY))
+            result.append(addition)
+          } else if isEmptyAndValid(Point(x: x + dirX, y: y + dirY)) && !whiteMove && containsWhite(Point(x: x, y: y)) {
+            addition = capture(position: addition, at: Point(x: x, y: y))
+            addition.blackKings.append(Point(x: x + dirX, y: y + dirY))
+            result.append(addition)
+          } else if isEmptyAndValid(Point(x: y, y: y)) {
+            if whiteMove {
+              addition.whiteKings.append(Point(x: x, y: y))
+            } else {
+              addition.blackKings.append(Point(x: x, y: y))
+            }
+            result.append(addition)
+          } else {
+            break
+          }
+        }
+        
+        return result
+      }
+      
       for man in men {
         taskGroup.addTask {
           var taskResult: [PiecesModel] = []
@@ -115,7 +145,15 @@ struct PiecesModel {
       }
       
       for king in kings {
-        
+        taskGroup.addTask {
+          let removed = capture(position: self, at: king)
+          var taskResult: [PiecesModel] = []
+          taskResult.append(contentsOf: kingMoves(position: removed, at: king, dirX: -1, dirY: -1))
+          taskResult.append(contentsOf: kingMoves(position: removed, at: king, dirX: -1, dirY: +1))
+          taskResult.append(contentsOf: kingMoves(position: removed, at: king, dirX: +1, dirY: -1))
+          taskResult.append(contentsOf: kingMoves(position: removed, at: king, dirX: +1, dirY: +1))
+          return taskResult
+        }
       }
       
       return await taskGroup.reduce(into: [PiecesModel]()) { partialResult, pieces in
