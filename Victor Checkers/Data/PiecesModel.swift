@@ -138,6 +138,7 @@ struct PiecesModel {
               var child = capture(position: self, at: man)
               child = capture(position: child, at: Point(x: man.x - 1, y: man.y + menMovingDirection))
               child = add(position: child, at: Point(x: man.x - 2, y: man.y + menMovingDirection * 2))
+              taskResult.append(child)
             }
           }
           return taskResult
