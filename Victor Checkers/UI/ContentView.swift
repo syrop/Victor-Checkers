@@ -74,7 +74,16 @@ struct ContentView: View {
                 makeAMove(size: geometry.size, location: gesture.location)
               }
           )
-        
+        if (viewModel.whiteWon) {
+          Text("White won")
+            .foregroundStyle(.black)
+            .background(.white)
+        }
+        if (viewModel.blackWon) {
+          Text("Black won")
+            .foregroundStyle(.black)
+            .background(.white)
+        }
       }
     }
       .padding()
