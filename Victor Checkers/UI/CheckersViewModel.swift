@@ -10,6 +10,9 @@ import Combine
 
 class CheckersViewModel: ObservableObject {
   
+  @Published var whiteWon: Bool = false
+  @Published var blackWon: Bool = false
+  @Published var noMoves: Bool = false
   @Published var position: PiecesModel = PiecesModel(
     whiteMen: [
       // Zeroth row
@@ -47,4 +50,24 @@ class CheckersViewModel: ObservableObject {
     ]
   )
   
+  static func populateChildren(position: inout PiecesModel) async {
+    position.children = await position.generateChildren()
+  }
+  
+  func nextPosition() async { // gives the most attractive position from black's point of view
+    if (position.whiteWon()) {
+      whiteWon = true
+    } else {
+     var result = position
+      await CheckersViewModel.populateChildren(position: &result)
+      if (result.children.isEmpty) {
+        noMoves = true
+      } else {
+        position = result.children.max(by: { $0.heuristics() < $1.heuristics() })!
+        if (position.blackWon()) {
+          blackWon = true
+        }
+      }
+    }
+  }
 }
