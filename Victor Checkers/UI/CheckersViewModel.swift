@@ -10,10 +10,7 @@ import Combine
 
 class CheckersViewModel: ObservableObject {
   
-  @Published var whiteWon: Bool = false
-  @Published var blackWon: Bool = false
-  @Published var noMoves: Bool = false
-  @Published var position: PiecesModel = PiecesModel(
+  static let INITIAL_POSITION = PiecesModel(
     whiteMen: [
       // Zeroth row
       PiecesModel.Point(x: 0, y: 0),
@@ -49,6 +46,11 @@ class CheckersViewModel: ObservableObject {
       PiecesModel.Point(x: 7, y: 7),
     ]
   )
+  
+  @Published var whiteWon: Bool = false
+  @Published var blackWon: Bool = false
+  @Published var noMoves: Bool = false
+  @Published var position: PiecesModel = INITIAL_POSITION
   
   static func populateChildren(position: inout PiecesModel) async {
     position.children = await position.generateChildren()

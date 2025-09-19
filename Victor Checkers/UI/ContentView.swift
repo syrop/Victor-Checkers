@@ -16,22 +16,23 @@ struct ContentView: View {
   @State private var refreshID = UUID()
   
   var body: some View {
-    GeometryReader { geometry in
-      ZStack {
-        Checkerboard(inverted: false)
-          .fill(.white)
-        Checkerboard(inverted: true)
-          .fill(.black)
-        Pieces(
-          position: viewModel.position.blackMen,
-        )
+    NavigationStack {
+      GeometryReader { geometry in
+        ZStack {
+          Checkerboard(inverted: false)
+            .fill(.white)
+          Checkerboard(inverted: true)
+            .fill(.black)
+          Pieces(
+            position: viewModel.position.blackMen,
+          )
           .fill(.red)
-        Pieces(
-          position: viewModel.position.whiteMen,
-          invisible: invisible,
-          offset: dragOffset,
-          movingKing: movingKing,
-        )
+          Pieces(
+            position: viewModel.position.whiteMen,
+            invisible: invisible,
+            offset: dragOffset,
+            movingKing: movingKing,
+          )
           .fill(.green)
           .gesture(
             DragGesture()
@@ -47,18 +48,18 @@ struct ContentView: View {
                 makeAMove(size: geometry.size, location: gesture.location)
               }
           )
-        Pieces(
-          position: viewModel.position.blackKings,
-          kings: true,
-        )
+          Pieces(
+            position: viewModel.position.blackKings,
+            kings: true,
+          )
           .fill(.red)
-        Pieces(
-          position: viewModel.position.whiteKings,
-          kings: true,
-          invisible: invisible,
-          offset: dragOffset,
-          movingKing: movingKing,
-        )
+          Pieces(
+            position: viewModel.position.whiteKings,
+            kings: true,
+            invisible: invisible,
+            offset: dragOffset,
+            movingKing: movingKing,
+          )
           .fill(.green)
           .gesture(
             DragGesture()
@@ -74,18 +75,18 @@ struct ContentView: View {
                 makeAMove(size: geometry.size, location: gesture.location)
               }
           )
-        if (viewModel.whiteWon) {
-          Text("White won")
-            .foregroundStyle(.black)
-            .background(.white)
-        }
-        if (viewModel.blackWon) {
-          Text("Black won")
-            .foregroundStyle(.black)
-            .background(.white)
+          if (viewModel.whiteWon) {
+            Text("White won")
+              .foregroundStyle(.black)
+              .background(.white)
+          }
+          if (viewModel.blackWon) {
+            Text("Black won")
+              .foregroundStyle(.black)
+              .background(.white)
+          }
         }
       }
-    }
       .padding()
       .task {
         var position = viewModel.position
@@ -93,6 +94,15 @@ struct ContentView: View {
         viewModel.position = position
       }
       .id(refreshID)
+      .toolbar {
+        ToolbarItem(placement: .topBarTrailing) {
+          Button("Reset") {
+            viewModel.position = CheckersViewModel.INITIAL_POSITION
+            refreshID = UUID()
+          }
+        }
+      }
+    }
   }
   
   func makeAMove(size: CGSize, location: CGPoint) {
