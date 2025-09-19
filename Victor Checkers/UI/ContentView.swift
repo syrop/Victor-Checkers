@@ -98,6 +98,9 @@ struct ContentView: View {
         ToolbarItem(placement: .topBarTrailing) {
           Button("Reset") {
             viewModel.position = CheckersViewModel.INITIAL_POSITION
+            viewModel.blackWon = false
+            viewModel.whiteWon = false
+            viewModel.noMoves = false
             refreshID = UUID()
           }
         }
@@ -123,8 +126,8 @@ struct ContentView: View {
           endX <= 7 {
         let dX = endX - invisible.x
         let dY = endY - invisible.y
-        let interimX = invisible.x + sign(dX)
-        let interimY = invisible.y + sign(dY)
+        let interimX = endX - sign(dX)
+        let interimY = endY - sign(dY)
         let interim = PiecesModel.Point(x: interimX, y: interimY)  // the captured piece, if any
         let indexBlackMan = viewModel.position.blackMen.firstIndex(of: interim)
         let indexBlackKing = viewModel.position.blackKings.firstIndex(of: interim)
@@ -145,8 +148,8 @@ struct ContentView: View {
               if (viewModel.position.whiteMen.contains(destination) ||
                   viewModel.position.whiteKings.contains(destination) ||
                   viewModel.position.blackMen.contains(destination) ||
-                  viewModel.position.blackMen.contains(destination)) && !(
-                    x == interimX && y == interimY && (indexBlackMan != nil || indexBlackKing != nil)) {
+                  viewModel.position.blackMen.contains(destination)) &&
+                  !(x == interimX && y == interimY && (indexBlackMan != nil || indexBlackKing != nil)) {
                 return
               }
             }
